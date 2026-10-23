@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -20,88 +22,127 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.proyectoappsmoviles.datos.UsuarioDao
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 fun PantallaLoginPsicologo(
-    usuarioDao: UsuarioDao,
-    onLoginExitoso: () -> Unit,
-    onIrARegistro: () -> Unit,
-    onVolver: () -> Unit
-) {
-    var usuario by remember { mutableStateOf("") }
-    var contrasena by remember { mutableStateOf("") }
-    var mensajeEstado by remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope()
+    usuarioDao:UsuarioDao,
+    onLoginExitoso:()->Unit,
+    onIrARegistro:()->Unit,
+    onVolver:()->Unit
+){
+    var usuario by remember{mutableStateOf("")}
+    var contrasena by remember{mutableStateOf("")}
+    var mensajeEstado by remember{mutableStateOf("")}
+    val scope=rememberCoroutineScope()
+    val colorRojo=Color(0xFF832A2D)
 
-    Scaffold { innerPadding ->
+    Scaffold{innerPadding->
         Column(
-            modifier = Modifier
+            modifier=Modifier
                 .padding(innerPadding)
                 .padding(16.dp)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Ingresa como Psicologo",
-                style = MaterialTheme.typography.headlineMedium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = usuario,
-                onValueChange = { usuario = it },
-                label = { Text("Usuario/Nombre") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = contrasena,
-                onValueChange = { contrasena = it },
-                label = { Text("Contraseña") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            verticalArrangement=Arrangement.Top,
+            horizontalAlignment=Alignment.CenterHorizontally
+        ){
             Button(
-                onClick = {
-                    if (usuario.isNotBlank() && contrasena.isNotBlank()) {
-                        scope.launch(Dispatchers.IO) {
-                            val usuarioEncontrado = usuarioDao.iniciarSesion(usuario, contrasena)
-                            if (usuarioEncontrado != null) {
-                                mensajeEstado = "BASE DE DATOS CORRECTA! INICIO GOOD"
+                onClick=onVolver,
+                modifier=Modifier.align(Alignment.End),
+                colors=ButtonDefaults.buttonColors(containerColor=colorRojo)
+            ){
+                Text(
+                    text="Regresar",
+                    color=Color.White
+                )
+            }
+            Spacer(modifier=Modifier.height(30.dp))
+            Text(
+                text="Acceso profesional",
+                style=MaterialTheme.typography.headlineMedium,
+                color=colorRojo
+            )
+            Spacer(modifier=Modifier.height(12.dp))
+            Card(
+                modifier=Modifier.fillMaxWidth()
+            ){
+                Column(
+                    modifier=Modifier.padding(12.dp)
+                ){
+                    Text(
+                        text="Psicólogo/a PIE",
+                        style=MaterialTheme.typography.titleMedium,
+                        color=colorRojo
+                    )
+                    Text(text="Acceso restringido y trazable")
+                }
+            }
+            Spacer(modifier=Modifier.height(16.dp))
+            OutlinedTextField(
+                value=usuario,
+                onValueChange={usuario=it},
+                label={Text("Correo institucional")},
+                modifier=Modifier.fillMaxWidth()
+            )
+            Spacer(modifier=Modifier.height(8.dp))
+            OutlinedTextField(
+                value=contrasena,
+                onValueChange={contrasena=it},
+                label={Text("Contraseña")},
+                modifier=Modifier.fillMaxWidth()
+            )
+            Spacer(modifier=Modifier.height(16.dp))
+            Button(
+                onClick={
+                    if(usuario.isNotBlank()&&contrasena.isNotBlank()){
+                        scope.launch{
+                            val usuarioEncontrado=usuarioDao.iniciarSesion(usuario,contrasena)
+                            if(usuarioEncontrado!=null){
                                 onLoginExitoso()
-                            } else {
-                                mensajeEstado = "Usuario o contraseña incorrectos"
+                            }else{
+                                mensajeEstado="Usuario o contraseña incorrectos"
                             }
                         }
-                    } else {
-                        mensajeEstado = "Completa todos los campos!!!"
+                    }else{
+                        mensajeEstado="Completa todos los campos!!!"
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Iniciar sesion")
+                modifier=Modifier.fillMaxWidth(),
+                colors=ButtonDefaults.buttonColors(containerColor=colorRojo)
+            ){
+                Text(
+                    text="Ingresar como profesional",
+                    color=Color.White
+                )
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier=Modifier.height(8.dp))
             Button(
-                onClick = onIrARegistro,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+                onClick=onIrARegistro,
+                modifier=Modifier.fillMaxWidth()
+            ){
                 Text("Registrarse!")
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(
-                onClick = onVolver,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("vuelve atras")
+            Spacer(modifier=Modifier.height(16.dp))
+            Card(
+                modifier=Modifier.fillMaxWidth()
+            ){
+                Column(
+                    modifier=Modifier.padding(12.dp)
+                ){
+                    Text(
+                        text="Privacidad institucional",
+                        style=MaterialTheme.typography.titleSmall,
+                        color=colorRojo
+                    )
+                    Text(text="Solo personal autorizado puede revisar respuestas. Toda acción queda registrada.")
+                }
             }
-            if (mensajeEstado.isNotBlank()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = mensajeEstado)
+            if(mensajeEstado.isNotBlank()){
+                Spacer(modifier=Modifier.height(8.dp))
+                Text(text=mensajeEstado)
             }
         }
     }

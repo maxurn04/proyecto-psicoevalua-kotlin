@@ -55,7 +55,7 @@ fun PantallaRegistroPsicologo(
             OutlinedTextField(
                 value = nombreCompleto,
                 onValueChange = { nombreCompleto = it },
-                label = { Text("Nombre Completo") },
+                label = { Text("Nombre ") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))

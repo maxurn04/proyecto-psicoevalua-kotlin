@@ -16,7 +16,7 @@ interface EvaluacionDao {
     suspend fun actualizarEvaluacion(evaluacion: Evaluacion)
 
     @Query("SELECT * FROM evaluaciones_local ORDER BY id DESC")
-    fun obtenerEvaluaciones(): Flow<List<Evaluacion>>
+    fun obtenerEvaluaciones(): List<Evaluacion>
 
     @Query("SELECT * FROM evaluaciones_local WHERE id = :id LIMIT 1")
     suspend fun obtenerPorId(id: Int): Evaluacion?
