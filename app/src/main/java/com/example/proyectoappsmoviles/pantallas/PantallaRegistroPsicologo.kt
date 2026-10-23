@@ -33,7 +33,7 @@ fun PantallaRegistroPsicologo(
     onVolver: () -> Unit
 ) {
     var nombreCompleto by remember { mutableStateOf("") }
-    var usuario by remember { mutableStateOf("") }
+    var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var mensaje by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -60,9 +60,9 @@ fun PantallaRegistroPsicologo(
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = usuario,
-                onValueChange = { usuario = it },
-                label = { Text("Nombre de Usuario") },
+                value = correo,
+                onValueChange = { correo = it },
+                label = { Text("Correo") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -75,12 +75,12 @@ fun PantallaRegistroPsicologo(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    if (!nombreCompleto.isEmpty() && !usuario.isEmpty() && !contrasena.isEmpty()) {
+                    if (!nombreCompleto.isEmpty() && !correo.isEmpty() && !contrasena.isEmpty()) {
                         scope.launch(Dispatchers.IO) {
                             usuarioDao.registrarUsuario(
                                 Usuario(
                                     nombreCompleto = nombreCompleto,
-                                    usuario = usuario,
+                                    correo = correo ,
                                     contrasena = contrasena
                                 )
                             )

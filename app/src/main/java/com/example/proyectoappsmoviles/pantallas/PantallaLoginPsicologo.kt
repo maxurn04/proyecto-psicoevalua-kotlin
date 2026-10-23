@@ -34,7 +34,7 @@ fun PantallaLoginPsicologo(
     onIrARegistro:()->Unit,
     onVolver:()->Unit
 ){
-    var usuario by remember{mutableStateOf("")}
+    var correo by remember{mutableStateOf("")}
     var contrasena by remember{mutableStateOf("")}
     var mensajeEstado by remember{mutableStateOf("")}
     val scope=rememberCoroutineScope()
@@ -82,9 +82,9 @@ fun PantallaLoginPsicologo(
             }
             Spacer(modifier=Modifier.height(16.dp))
             OutlinedTextField(
-                value=usuario,
-                onValueChange={usuario=it},
-                label={Text("Correo institucional")},
+                value=correo,
+                onValueChange={correo=it},
+                label={Text("Correo ")},
                 modifier=Modifier.fillMaxWidth()
             )
             Spacer(modifier=Modifier.height(8.dp))
@@ -97,9 +97,9 @@ fun PantallaLoginPsicologo(
             Spacer(modifier=Modifier.height(16.dp))
             Button(
                 onClick={
-                    if(usuario.isNotBlank()&&contrasena.isNotBlank()){
+                    if(correo.isNotBlank()&&contrasena.isNotBlank()){
                         scope.launch{
-                            val usuarioEncontrado=usuarioDao.iniciarSesion(usuario,contrasena)
+                            val usuarioEncontrado=usuarioDao.iniciarSesion(correo,contrasena)
                             if(usuarioEncontrado!=null){
                                 onLoginExitoso()
                             }else{

@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
         Usuario::class,
         Evaluacion::class
     ],
-    version = 1
+    version = 2
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun usuarioDao(): UsuarioDao
@@ -25,7 +25,8 @@ abstract class AppDatabase: RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "mpaz_psicoevalua_bbdd"
-                ).build()
+                )
+                    .build()
                 INSTANCE = instance
                 instance
             }

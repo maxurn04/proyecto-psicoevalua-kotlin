@@ -31,15 +31,32 @@ import com.example.proyectoappsmoviles.datos.Evaluacion
 import com.example.proyectoappsmoviles.datos.EvaluacionDao
 import kotlinx.coroutines.launch
 
+fun generarIdDemo(): String {
+    val correlativo = (100..999).random()
+    return "MPZ-$correlativo"
+}
+
+fun generarPinAcceso(): String {
+    val abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    val digitos = "0123456789"
+    val c1 = abecedario.random()
+    val c2 = abecedario.random()
+    val c3 = abecedario.random()
+    val n1 = digitos.random()
+    val n2 = digitos.random()
+    val n3 = digitos.random()
+    return "$c1$c2$c3-$n1$n2$n3"
+}
+
 @Composable
 fun NuevaEvaluacion(
     evaluacionDao: EvaluacionDao,
-    onEvaluacionGuardada: () -> Unit,
+    onEvaluacionGuardada: (String, String) -> Unit,
     onVolver: () -> Unit
 ) {
     var idEstudianteFicticio by remember { mutableStateOf("") }
     var cursoEstudiante by remember { mutableStateOf("") }
-    var codigoPin by remember { mutableStateOf("") }
+    var idEstudianteDemo by remember { mutableStateOf(generarIdDemo()) }
     var mensaje by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
@@ -63,11 +80,11 @@ fun NuevaEvaluacion(
                     onClick = onVolver,
                     colors = ButtonDefaults.buttonColors(containerColor = colorRojo)
                 ) {
-                    Text("← Volver", color = Color.White)
+                    Text("Volver", color = Color.White)
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "Nueva aplicación",
+                    text = "Nuevo formulario",
                     style = MaterialTheme.typography.titleLarge
                 )
             }
@@ -86,7 +103,7 @@ fun NuevaEvaluacion(
                 ) {
                     Column {
                         Text(
-                            text = "INSTRUMENTO",
+                            text = "INSTRUMENTO SELECCIONADO",
                             style = MaterialTheme.typography.labelMedium,
                             color = Color.Gray
                         )
@@ -125,9 +142,9 @@ fun NuevaEvaluacion(
                     modifier = Modifier.weight(1f)
                 )
                 OutlinedTextField(
-                    value = codigoPin,
-                    onValueChange = { codigoPin = it },
-                    label = { Text("ID / PIN") },
+                    value = idEstudianteDemo,
+                    onValueChange = { idEstudianteDemo = it },
+                    label = { Text("ID ESTUDIANTE") },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -156,20 +173,21 @@ fun NuevaEvaluacion(
 
             Button(
                 onClick = {
-                    if (idEstudianteFicticio.isNotBlank() && cursoEstudiante.isNotBlank() && codigoPin.isNotBlank()) {
+                    if (idEstudianteFicticio.isNotBlank() && cursoEstudiante.isNotBlank() && idEstudianteDemo.isNotBlank()) {
+                        val pinAsignado = generarPinAcceso()
                         scope.launch {
                             evaluacionDao.insertarEvaluacion(
                                 Evaluacion(
-                                    codigoPin = codigoPin,
+                                    codigoPin = pinAsignado,
                                     idEstudianteFicticio = idEstudianteFicticio,
                                     cursoEstudiante = cursoEstudiante,
-                                    nombreInstrumento = "Cuestionario de adaptación escolar",
+                                    nombreInstrumento = "Adaptación escolar",
                                     estado = "Pendiente",
                                     puntajeTotal = 0,
-                                    observacionPsicologo = "Generado desde panel"
+                                    observacionPsicologo = "ID Ficticio: $idEstudianteDemo"
                                 )
                             )
-                            onEvaluacionGuardada()
+                            onEvaluacionGuardada(idEstudianteFicticio, pinAsignado)
                         }
                     } else {
                         mensaje = "Completa los campos obligatorios"
