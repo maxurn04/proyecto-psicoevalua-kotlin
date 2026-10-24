@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
 fun PanelPsicologo(
     evaluacionDao:EvaluacionDao,
     onIrANuevaEvaluacion:()->Unit,
+    onRevisarEvaluacion:(Evaluacion)->Unit,
     onCerrarSesion:()->Unit
 ){
     var listaEvaluaciones by remember{mutableStateOf(listOf<Evaluacion>())}
@@ -239,6 +240,13 @@ fun PanelPsicologo(
                                 Text(text=eval.nombreInstrumento)
                                 Text(text="Curso: ${eval.cursoEstudiante} - PIN: ${eval.codigoPin}")
                                 Text(text="Estado: ${eval.estado} - Puntaje: ${eval.puntajeTotal}")
+                                Spacer(modifier=Modifier.height(8.dp))
+                                Button(
+                                    onClick={onRevisarEvaluacion(eval)},
+                                    colors=ButtonDefaults.buttonColors(containerColor=colorRojo)
+                                ){
+                                    Text("Revisar detalle",color=Color.White)
+                                }
                             }
                         }
                     }
@@ -327,13 +335,20 @@ fun PanelPsicologo(
                                     text="Estudiante: ${eval.idEstudianteFicticio}",
                                     style=MaterialTheme.typography.titleMedium
                                 )
-                                Text(text="Instrumento: ${eval.nombreInstrumento}")
+                                Text(text=eval.nombreInstrumento)
                                 Text(text="Curso: ${eval.cursoEstudiante} - PIN: ${eval.codigoPin}")
                                 Text(text="Estado: ${eval.estado} - Puntaje: ${eval.puntajeTotal}")
                                 if(eval.observacionPsicologo.isNotEmpty()){
                                     Text(text="Observación: ${eval.observacionPsicologo}")
                                 }else{
                                     Text(text="Observación: Pendiente de revisión")
+                                }
+                                Spacer(modifier=Modifier.height(8.dp))
+                                Button(
+                                    onClick={onRevisarEvaluacion(eval)},
+                                    colors=ButtonDefaults.buttonColors(containerColor=colorRojo)
+                                ){
+                                    Text("Revisar detalle",color=Color.White)
                                 }
                             }
                         }

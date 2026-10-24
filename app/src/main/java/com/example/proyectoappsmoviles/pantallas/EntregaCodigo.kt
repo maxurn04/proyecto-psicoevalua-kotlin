@@ -37,7 +37,7 @@ fun EntregaCodigo(
     onContinuar: () -> Unit,
     onCancelar: () -> Unit
 ) {
-    val clipboardManager = LocalClipboardManager.current //para copiar y pegar el codigo
+    val clipboardManager = LocalClipboardManager.current //copiar y pegar el codigo q se genera
     val colorRojo = Color(0xFF832A2D)
     val colorRosa = Color(0xFFFBECEC)
     val colorGrisFondo = Color(0xFFF9F9F9)

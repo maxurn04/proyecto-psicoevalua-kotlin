@@ -30,15 +30,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun PantallaLoginPsicologo(
     usuarioDao:UsuarioDao,
-    onLoginExitoso:()->Unit,
+    onLoginExitoso:(Boolean)->Unit, //para recordar sesion, lo del boleano
     onIrARegistro:()->Unit,
     onVolver:()->Unit
 ){
     var correo by remember{mutableStateOf("")}
     var contrasena by remember{mutableStateOf("")}
+    var mantenerIniciado by remember{mutableStateOf(false)}
     var mensajeEstado by remember{mutableStateOf("")}
     val scope=rememberCoroutineScope()
     val colorRojo=Color(0xFF832A2D)
+    val colorRosa=Color(0xFFE5C1C5)
 
     Scaffold{innerPadding->
         Column(
@@ -94,6 +96,19 @@ fun PantallaLoginPsicologo(
                 label={Text("Contraseña")},
                 modifier=Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = { mantenerIniciado = !mantenerIniciado },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (mantenerIniciado) colorRojo else colorRosa
+                )
+            ) {
+                Text(
+                    text = if (mantenerIniciado) "Recordar en este equipo: SÍ" else "Recordar en este equipo: NO",
+                    color = if (mantenerIniciado) Color.White else colorRojo
+                )
+            }
             Spacer(modifier=Modifier.height(16.dp))
             Button(
                 onClick={
@@ -101,7 +116,7 @@ fun PantallaLoginPsicologo(
                         scope.launch{
                             val usuarioEncontrado=usuarioDao.iniciarSesion(correo,contrasena)
                             if(usuarioEncontrado!=null){
-                                onLoginExitoso()
+                                onLoginExitoso(mantenerIniciado)
                             }else{
                                 mensajeEstado="Usuario o contraseña incorrectos"
                             }

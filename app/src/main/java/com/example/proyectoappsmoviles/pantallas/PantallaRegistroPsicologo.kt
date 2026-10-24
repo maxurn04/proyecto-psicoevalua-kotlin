@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.proyectoappsmoviles.datos.Usuario
 import com.example.proyectoappsmoviles.datos.UsuarioDao
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,7 +54,7 @@ fun PantallaRegistroPsicologo(
             OutlinedTextField(
                 value = nombreCompleto,
                 onValueChange = { nombreCompleto = it },
-                label = { Text("Nombre ") },
+                label = { Text("Nombre") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -75,17 +74,17 @@ fun PantallaRegistroPsicologo(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    if (!nombreCompleto.isEmpty() && !correo.isEmpty() && !contrasena.isEmpty()) {
-                        scope.launch(Dispatchers.IO) {
+                    if (nombreCompleto.isNotBlank() && correo.isNotBlank() && contrasena.isNotBlank()) {
+                        scope.launch {
                             usuarioDao.registrarUsuario(
                                 Usuario(
                                     nombreCompleto = nombreCompleto,
-                                    correo = correo ,
+                                    correo = correo,
                                     contrasena = contrasena
                                 )
                             )
+                            onRegistroExitoso()
                         }
-                        onRegistroExitoso()
                     } else {
                         mensaje = "Completa todos los campos"
                     }
