@@ -5,6 +5,6 @@ import androidx.room.Query
 
 @Dao
 interface PreguntaDao {
-    @Query("SELECT * FROM preguntas_local WHERE idInstrumento = :idInstrumento ORDER BY orden")
-    suspend fun obtenerPorInstrumento(idInstrumento: Int): List<Pregunta>
+    @Query("SELECT * FROM preguntas_local WHERE nombreInstrumento LIKE '%' || :nombre || '%' OR :nombre LIKE '%' || nombreInstrumento || '%' ORDER BY orden")
+    suspend fun obtenerPorInstrumento(nombre: String): List<Pregunta>
 }

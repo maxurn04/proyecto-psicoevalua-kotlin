@@ -8,16 +8,14 @@ import androidx.room.RoomDatabase
     entities = [
         Usuario::class,
         Evaluacion::class,
-        Instrumento::class,
         Pregunta::class,
         Respuesta::class
     ],
-    version = 5
+    version = 6
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun usuarioDao(): UsuarioDao
     abstract fun evaluacionDao(): EvaluacionDao
-    abstract fun instrumentoDao(): InstrumentoDao
     abstract fun preguntaDao(): PreguntaDao
     abstract fun respuestaDao(): RespuestaDao
 
