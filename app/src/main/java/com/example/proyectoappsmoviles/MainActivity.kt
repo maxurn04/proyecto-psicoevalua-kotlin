@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import com.example.proyectoappsmoviles.datos.Evaluacion
 import com.example.proyectoappsmoviles.pantallas.DetalleEvaluacion
+import com.example.proyectoappsmoviles.pantallas.CatalogoInstrumentos
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
