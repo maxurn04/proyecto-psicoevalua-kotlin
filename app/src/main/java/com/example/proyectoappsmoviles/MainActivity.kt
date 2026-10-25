@@ -28,6 +28,8 @@ import com.example.proyectoappsmoviles.datos.Evaluacion
 import com.example.proyectoappsmoviles.pantallas.DetalleEvaluacion
 import com.example.proyectoappsmoviles.pantallas.CatalogoInstrumentos
 import com.example.proyectoappsmoviles.pantallas.PantallaIngresoEstudiante
+import com.example.proyectoappsmoviles.pantallas.PantallaInstrucciones
+import com.example.proyectoappsmoviles.pantallas.PantallaResponderPrueba
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +61,7 @@ fun AppNavegacion(navController: NavHostController,
     var instrumentoSeleccionado by remember { mutableStateOf("Cuestionario de adaptación escolar") }
     var estudianteCreado by remember { mutableStateOf("") }
     val respuestaDao = AppDatabase.obtenerBBDD(context).respuestaDao()
+    val preguntaDao = AppDatabase.obtenerBBDD(context).preguntaDao()
     var evaluacionEstudiante by remember { mutableStateOf<Evaluacion?>(null) }
     var pinCreado by remember { mutableStateOf("") }
     var cursoEstudiante by remember { mutableStateOf("") }
@@ -92,9 +95,30 @@ fun AppNavegacion(navController: NavHostController,
             PantallaIngresoEstudiante(
                 respuestaDao = respuestaDao,
                 evaluacionDao = evaluacionDao,
-                onAccesoCorrecto = { eval -> evaluacionEstudiante = eval },
+                onAccesoCorrecto = { eval ->
+                    evaluacionEstudiante = eval
+                    navController.navigate("instrucciones")
+                },
+
                 onVolver = { navController.navigate("inicio") }
             )
+        }
+        composable("instrucciones") {
+            evaluacionEstudiante?.let { eval ->
+                PantallaInstrucciones(
+                    evaluacion = eval,
+                    onComenzar = { navController.navigate("responder_prueba") }
+                )
+            }
+        }
+        composable("responder_prueba") {
+            evaluacionEstudiante?.let { eval ->
+                PantallaResponderPrueba(
+                    evaluacion = eval,
+                    preguntaDao = preguntaDao,
+                    onTerminar = { }
+                )
+            }
         }
         composable("login_psicologo") {
             PantallaLoginPsicologo(
