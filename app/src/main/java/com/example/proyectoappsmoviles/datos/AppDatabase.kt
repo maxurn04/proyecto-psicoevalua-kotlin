@@ -7,13 +7,19 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [
         Usuario::class,
-        Evaluacion::class
+        Evaluacion::class,
+        Instrumento::class,
+        Pregunta::class,
+        Respuesta::class
     ],
-    version = 3
+    version = 5
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun usuarioDao(): UsuarioDao
     abstract fun evaluacionDao(): EvaluacionDao
+    abstract fun instrumentoDao(): InstrumentoDao
+    abstract fun preguntaDao(): PreguntaDao
+    abstract fun respuestaDao(): RespuestaDao
 
     companion object{
         @Volatile
@@ -27,6 +33,7 @@ abstract class AppDatabase: RoomDatabase() {
                     "mpaz_psicoevalua_bbdd"
                 )
                     .fallbackToDestructiveMigration()
+                    .addCallback(SemillaDatos.callback)
                     .build()
                 INSTANCE = instance
                 instance
@@ -34,3 +41,4 @@ abstract class AppDatabase: RoomDatabase() {
         }
     }
 }
+
