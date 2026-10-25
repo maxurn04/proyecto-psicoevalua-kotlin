@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import com.example.proyectoappsmoviles.datos.Evaluacion
 import com.example.proyectoappsmoviles.pantallas.DetalleEvaluacion
 import com.example.proyectoappsmoviles.pantallas.CatalogoInstrumentos
+import com.example.proyectoappsmoviles.pantallas.PantallaIngresoEstudiante
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +58,8 @@ fun AppNavegacion(navController: NavHostController,
     }
     var instrumentoSeleccionado by remember { mutableStateOf("Cuestionario de adaptación escolar") }
     var estudianteCreado by remember { mutableStateOf("") }
+    val respuestaDao = AppDatabase.obtenerBBDD(context).respuestaDao()
+    var evaluacionEstudiante by remember { mutableStateOf<Evaluacion?>(null) }
     var pinCreado by remember { mutableStateOf("") }
     var cursoEstudiante by remember { mutableStateOf("") }
     var evaluacionSeleccionada by remember {
@@ -82,7 +85,15 @@ fun AppNavegacion(navController: NavHostController,
         composable("inicio") {
             PantallaInicio(
                 onIrLoginPsicologo = { navController.navigate("login_psicologo") },
-                onIrAccesoEstudiantes = {  } //falta lado estudiantes (por el codigo de la prueba)
+                onIrAccesoEstudiantes = { navController.navigate("ingreso_estudiante") }
+            )
+        }
+        composable("ingreso_estudiante") {
+            PantallaIngresoEstudiante(
+                respuestaDao = respuestaDao,
+                evaluacionDao = evaluacionDao,
+                onAccesoCorrecto = { eval -> evaluacionEstudiante = eval },
+                onVolver = { navController.navigate("inicio") }
             )
         }
         composable("login_psicologo") {
