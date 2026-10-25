@@ -55,6 +55,7 @@ fun AppNavegacion(navController: NavHostController,
     val preferencias = context.getSharedPreferences("sesion_pie", Context.MODE_PRIVATE)
     var sesionMantenerActiva by remember { mutableStateOf(preferencias.getBoolean("mantener_sesion", false))
     }
+    var instrumentoSeleccionado by remember { mutableStateOf("Cuestionario de adaptación escolar") }
     var estudianteCreado by remember { mutableStateOf("") }
     var pinCreado by remember { mutableStateOf("") }
     var cursoEstudiante by remember { mutableStateOf("") }
@@ -106,7 +107,10 @@ fun AppNavegacion(navController: NavHostController,
         composable("panel_ini_psicologo"){
             PanelPsicologo(
                 evaluacionDao=evaluacionDao,
-                onIrANuevaEvaluacion={navController.navigate("nueva_evaluacion")},
+                onIrANuevaEvaluacion={ instrumento ->
+                    instrumentoSeleccionado = instrumento
+                    navController.navigate("nueva_evaluacion")
+                },
                 onRevisarEvaluacion = { eval ->
                     evaluacionSeleccionada = eval
                     navController.navigate("detalle_evaluacion")
@@ -122,6 +126,7 @@ fun AppNavegacion(navController: NavHostController,
         composable("nueva_evaluacion"){
             NuevaEvaluacion(
                 evaluacionDao=evaluacionDao,
+                nombreInstrumento = instrumentoSeleccionado,
                 onEvaluacionGuardada={
                     nombre, pin -> estudianteCreado = nombre; pinCreado = pin; navController.navigate("entrega_codigo")
                 },

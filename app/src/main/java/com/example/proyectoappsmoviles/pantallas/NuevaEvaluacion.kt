@@ -51,6 +51,7 @@ fun generarPinAcceso(): String {
 @Composable
 fun NuevaEvaluacion(
     evaluacionDao: EvaluacionDao,
+    nombreInstrumento: String = "Cuestionario de adaptación escolar",
     onEvaluacionGuardada: (String, String) -> Unit,
     onVolver: () -> Unit
 ) {
@@ -108,7 +109,7 @@ fun NuevaEvaluacion(
                             color = Color.Gray
                         )
                         Text(
-                            text = "Cuestionario de adaptación escolar",
+                            text = nombreInstrumento,
                             style = MaterialTheme.typography.titleMedium
                         )
                     }
@@ -181,7 +182,7 @@ fun NuevaEvaluacion(
                                     codigoPin = pinAsignado,
                                     idEstudianteFicticio = idEstudianteFicticio,
                                     cursoEstudiante = cursoEstudiante,
-                                    nombreInstrumento = "Adaptación escolar",
+                                    nombreInstrumento = nombreInstrumento,
                                     estado = "Pendiente",
                                     puntajeTotal = 0,
                                     observacionPsicologo = "ID Ficticio: $idEstudianteDemo"

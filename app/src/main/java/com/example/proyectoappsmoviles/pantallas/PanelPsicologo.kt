@@ -36,9 +36,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun PanelPsicologo(
     evaluacionDao:EvaluacionDao,
-    onIrANuevaEvaluacion:()->Unit,
     onRevisarEvaluacion:(Evaluacion)->Unit,
-    onCerrarSesion:()->Unit
+    onCerrarSesion:()->Unit,
+    onIrANuevaEvaluacion:(String)->Unit,
 ){
     var listaEvaluaciones by remember{mutableStateOf(listOf<Evaluacion>())}
     var seccionActual by remember{mutableStateOf("inicio")}
@@ -195,7 +195,7 @@ fun PanelPsicologo(
                 }
                 Spacer(modifier=Modifier.height(16.dp))
                 Button(
-                    onClick=onIrANuevaEvaluacion,
+                    onClick={onIrANuevaEvaluacion("Cuestionario de Adaptación Escolar")},
                     modifier=Modifier.fillMaxWidth(),
                     colors=ButtonDefaults.buttonColors(containerColor=colorRosa)
                 ){
@@ -251,14 +251,58 @@ fun PanelPsicologo(
                         }
                     }
                 }
-            } else if (seccionActual == "instrumentos") {
-        CatalogoInstrumentos(
-            onSeleccionarInstrumento = { instrumento ->
-                onIrANuevaEvaluacion()
-            },
-            onVolver = { seccionActual = "inicio" }
-        )
-    }else if(seccionActual=="historial"){
+            }else if(seccionActual=="instrumentos"){
+                Text(
+                    text="Catálogo de Instrumentos Predefinidos",
+                    style=MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier=Modifier.height(12.dp))
+                Card(
+                    modifier=Modifier.fillMaxWidth()
+                ){
+                    Column(
+                        modifier=Modifier.padding(16.dp)
+                    ){
+                        Text(
+                            text="Cuestionario Socioemocional",
+                            style=MaterialTheme.typography.titleMedium
+                        )
+                        Text(text="Rango: 1° a 4° Básico - Tiempo: 15 min")
+                        Text(text="Estado: Disponible para aplicar")
+                        Spacer(modifier=Modifier.height(8.dp))
+                        Button(
+                            onClick={onIrANuevaEvaluacion("Cuestionario Socioemocional")},
+                            modifier=Modifier.fillMaxWidth(),
+                            colors=ButtonDefaults.buttonColors(containerColor=colorRojo)
+                        ){
+                            Text("Asignar este instrumento",color=Color.White)
+                        }
+                    }
+                }
+                Spacer(modifier=Modifier.height(12.dp))
+                Card(
+                    modifier=Modifier.fillMaxWidth()
+                ){
+                    Column(
+                        modifier=Modifier.padding(16.dp)
+                    ){
+                        Text(
+                            text="Escala de Hábitos de Estudio",
+                            style=MaterialTheme.typography.titleMedium
+                        )
+                        Text(text="Rango: 5° a 8° Básico - Tiempo: 20 min")
+                        Text(text="Estado: Disponible para aplicar")
+                        Spacer(modifier=Modifier.height(8.dp))
+                        Button(
+                            onClick={onIrANuevaEvaluacion("Escala de Hábitos de Estudio")},
+                            modifier=Modifier.fillMaxWidth(),
+                            colors=ButtonDefaults.buttonColors(containerColor=colorRojo)
+                        ){
+                            Text("Asignar este instrumento",color=Color.White)
+                        }
+                    }
+                }
+            }else if(seccionActual=="historial"){
                 Text(
                     text="Historial y Revisión de Estudiantes",
                     style=MaterialTheme.typography.titleMedium
