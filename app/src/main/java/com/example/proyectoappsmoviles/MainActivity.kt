@@ -34,6 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import androidx.activity.compose.BackHandler
 import com.example.proyectoappsmoviles.pantallas.PantallaPruebaFinalizada
+import com.example.proyectoappsmoviles.pantallas.PantallaSegura
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,6 +98,7 @@ fun AppNavegacion(navController: NavHostController,
             )
         }
         composable("ingreso_estudiante") {
+            PantallaSegura()
             PantallaIngresoEstudiante(
                 respuestaDao = respuestaDao,
                 evaluacionDao = evaluacionDao,
@@ -109,6 +111,7 @@ fun AppNavegacion(navController: NavHostController,
             )
         }
         composable("instrucciones") {
+            PantallaSegura()
             BackHandler(enabled = true) { }
             evaluacionEstudiante?.let { eval ->
                 PantallaInstrucciones(
@@ -119,6 +122,7 @@ fun AppNavegacion(navController: NavHostController,
         }
 
         composable("responder_prueba") {
+            PantallaSegura()
             BackHandler(enabled = true) { }
             evaluacionEstudiante?.let { eval ->
                 PantallaResponderPrueba(
@@ -141,6 +145,7 @@ fun AppNavegacion(navController: NavHostController,
         }
 
         composable("prueba_finalizada") {
+            PantallaSegura()
             PantallaPruebaFinalizada(
                 onSalir = {
                     evaluacionEstudiante = null
