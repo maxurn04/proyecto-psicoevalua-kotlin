@@ -68,6 +68,7 @@ fun AppNavegacion(navController: NavHostController,
     val respuestaDao = AppDatabase.obtenerBBDD(context).respuestaDao()
     val preguntaDao = AppDatabase.obtenerBBDD(context).preguntaDao()
     val scope = rememberCoroutineScope()
+    var enviandoRespuestas by remember { mutableStateOf(false) }
     var evaluacionEstudiante by remember { mutableStateOf<Evaluacion?>(null) }
     var pinCreado by remember { mutableStateOf("") }
     var cursoEstudiante by remember { mutableStateOf("") }
@@ -103,6 +104,7 @@ fun AppNavegacion(navController: NavHostController,
                 respuestaDao = respuestaDao,
                 evaluacionDao = evaluacionDao,
                 onAccesoCorrecto = { eval ->
+                    enviandoRespuestas = false
                     evaluacionEstudiante = eval
                     navController.navigate("instrucciones")
                 },
@@ -129,15 +131,18 @@ fun AppNavegacion(navController: NavHostController,
                     evaluacion = eval,
                     preguntaDao = preguntaDao,
                     onTerminar = { respuestas ->
-                        scope.launch {
-                            respuestaDao.guardarRespuestas(respuestas)
-                            val finalizada = eval.copy(
-                                puntajeTotal = respuestas.sumOf { it.puntos },
-                                estado = "Finalizada"
-                            )
-                            evaluacionDao.actualizarEvaluacion(finalizada)
-                            evaluacionEstudiante = finalizada
-                            navController.navigate("prueba_finalizada")
+                        if (!enviandoRespuestas) {
+                            enviandoRespuestas = true
+                            scope.launch {
+                                respuestaDao.guardarRespuestas(respuestas)
+                                val finalizada = eval.copy(
+                                    puntajeTotal = respuestas.sumOf { it.puntos },
+                                    estado = "Finalizada"
+                                )
+                                evaluacionDao.actualizarEvaluacion(finalizada)
+                                evaluacionEstudiante = finalizada
+                                navController.navigate("prueba_finalizada")
+                            }
                         }
                     }
                 )
