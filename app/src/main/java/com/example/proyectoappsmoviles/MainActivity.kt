@@ -30,6 +30,10 @@ import com.example.proyectoappsmoviles.pantallas.CatalogoInstrumentos
 import com.example.proyectoappsmoviles.pantallas.PantallaIngresoEstudiante
 import com.example.proyectoappsmoviles.pantallas.PantallaInstrucciones
 import com.example.proyectoappsmoviles.pantallas.PantallaResponderPrueba
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import androidx.activity.compose.BackHandler
+import com.example.proyectoappsmoviles.pantallas.PantallaPruebaFinalizada
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +66,7 @@ fun AppNavegacion(navController: NavHostController,
     var estudianteCreado by remember { mutableStateOf("") }
     val respuestaDao = AppDatabase.obtenerBBDD(context).respuestaDao()
     val preguntaDao = AppDatabase.obtenerBBDD(context).preguntaDao()
+    val scope = rememberCoroutineScope()
     var evaluacionEstudiante by remember { mutableStateOf<Evaluacion?>(null) }
     var pinCreado by remember { mutableStateOf("") }
     var cursoEstudiante by remember { mutableStateOf("") }
@@ -104,6 +109,7 @@ fun AppNavegacion(navController: NavHostController,
             )
         }
         composable("instrucciones") {
+            BackHandler(enabled = true) { }
             evaluacionEstudiante?.let { eval ->
                 PantallaInstrucciones(
                     evaluacion = eval,
@@ -111,15 +117,40 @@ fun AppNavegacion(navController: NavHostController,
                 )
             }
         }
+
         composable("responder_prueba") {
+            BackHandler(enabled = true) { }
             evaluacionEstudiante?.let { eval ->
                 PantallaResponderPrueba(
                     evaluacion = eval,
                     preguntaDao = preguntaDao,
-                    onTerminar = { }
+                    onTerminar = { respuestas ->
+                        scope.launch {
+                            respuestaDao.guardarRespuestas(respuestas)
+                            val finalizada = eval.copy(
+                                puntajeTotal = respuestas.sumOf { it.puntos },
+                                estado = "Finalizada"
+                            )
+                            evaluacionDao.actualizarEvaluacion(finalizada)
+                            evaluacionEstudiante = finalizada
+                            navController.navigate("prueba_finalizada")
+                        }
+                    }
                 )
             }
         }
+
+        composable("prueba_finalizada") {
+            PantallaPruebaFinalizada(
+                onSalir = {
+                    evaluacionEstudiante = null
+                    navController.navigate("inicio") {
+                        popUpTo("inicio") { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable("login_psicologo") {
             PantallaLoginPsicologo(
                 usuarioDao = usuarioDao,
