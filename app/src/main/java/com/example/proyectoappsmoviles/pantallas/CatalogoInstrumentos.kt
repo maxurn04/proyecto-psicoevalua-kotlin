@@ -38,7 +38,6 @@ data class ItemInstrumento(
 @Composable
 fun CatalogoInstrumentos(
     onSeleccionarInstrumento: (String) -> Unit,
-    onVolver: () -> Unit
 ) {
     val colorRojo = Color(0xFF832A2D)
     val colorRosa = Color(0xFFE5C1C5)
@@ -78,29 +77,18 @@ fun CatalogoInstrumentos(
         )
     )
 
-    Scaffold { innerPadding ->
+    Scaffold { Column ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.Center
             ) {
-                Button(
-                    onClick = onVolver,
-                    colors = ButtonDefaults.buttonColors(containerColor = colorRojo)
-                ) {
-                    Text("← Volver", color = Color.White)
-                }
-                Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = "Catálogo de Instrumentos",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+
                 )
             }
 
@@ -110,7 +98,7 @@ fun CatalogoInstrumentos(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = colorAmarillo)
             ) {
-                Column(modifier = Modifier.padding(12.dp)) {
+                Column(modifier = Modifier.padding(7.dp)) {
                     Text(
                         text = "Marco de uso ético PIE",
                         style = MaterialTheme.typography.titleSmall,

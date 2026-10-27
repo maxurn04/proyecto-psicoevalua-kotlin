@@ -31,11 +31,6 @@ import com.example.proyectoappsmoviles.datos.Evaluacion
 import com.example.proyectoappsmoviles.datos.EvaluacionDao
 import kotlinx.coroutines.launch
 
-fun generarIdDemo(): String {
-    val correlativo = (100..999).random()
-    return "MPZ-$correlativo"
-}
-
 fun generarPinAcceso(): String {
     val abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     val digitos = "0123456789"
@@ -55,14 +50,13 @@ fun NuevaEvaluacion(
     onEvaluacionGuardada: (String, String) -> Unit,
     onVolver: () -> Unit
 ) {
-    var idEstudianteFicticio by remember { mutableStateOf("") }
+    var EstudianteFicticio by remember { mutableStateOf("") }
     var cursoEstudiante by remember { mutableStateOf("") }
-    var idEstudianteDemo by remember { mutableStateOf(generarIdDemo()) }
+    var idEstudianteDemo by remember { mutableStateOf("") }
     var mensaje by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
     val colorRojo = Color(0xFF832A2D)
-    val colorAmarillo = Color(0xFFFBE8C5)
 
     Scaffold { innerPadding ->
         Column(
@@ -81,7 +75,7 @@ fun NuevaEvaluacion(
                     onClick = onVolver,
                     colors = ButtonDefaults.buttonColors(containerColor = colorRojo)
                 ) {
-                    Text("Volver", color = Color.White)
+                    Text("Volver", color = Color.White, style = MaterialTheme.typography.labelSmall)
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
@@ -124,9 +118,9 @@ fun NuevaEvaluacion(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = idEstudianteFicticio,
-                onValueChange = { idEstudianteFicticio = it },
-                label = { Text("Nombre ficticio del estudiante") },
+                value = EstudianteFicticio,
+                onValueChange = { EstudianteFicticio = it },
+                label = { Text("Nombre Estudiante") },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -145,50 +139,33 @@ fun NuevaEvaluacion(
                 OutlinedTextField(
                     value = idEstudianteDemo,
                     onValueChange = { idEstudianteDemo = it },
-                    label = { Text("ID ESTUDIANTE") },
+                    label = { Text("ID Estudiante") },
                     modifier = Modifier.weight(1f)
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = colorAmarillo)
-            ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(
-                        text = "Datos de demostración",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = Color.DarkGray
-                    )
-                    Text(
-                        text = "No ingreses información real o sensible en este prototipo.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.DarkGray
-                    )
-                }
-            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(
                 onClick = {
-                    if (idEstudianteFicticio.isNotBlank() && cursoEstudiante.isNotBlank() && idEstudianteDemo.isNotBlank()) {
+                    if (EstudianteFicticio.isNotBlank() && cursoEstudiante.isNotBlank() && idEstudianteDemo.isNotBlank()) {
                         val pinAsignado = generarPinAcceso()
                         scope.launch {
                             evaluacionDao.insertarEvaluacion(
                                 Evaluacion(
                                     codigoPin = pinAsignado,
-                                    idEstudianteFicticio = idEstudianteFicticio,
+                                    idEstudianteFicticio = EstudianteFicticio,
                                     cursoEstudiante = cursoEstudiante,
                                     nombreInstrumento = nombreInstrumento,
                                     estado = "Pendiente",
                                     puntajeTotal = 0,
-                                    observacionPsicologo = "ID Ficticio: $idEstudianteDemo"
+                                    observacionPsicologo = ""
                                 )
                             )
-                            onEvaluacionGuardada(idEstudianteFicticio, pinAsignado)
+                            onEvaluacionGuardada(EstudianteFicticio, pinAsignado)
                         }
                     } else {
                         mensaje = "Completa los campos obligatorios"

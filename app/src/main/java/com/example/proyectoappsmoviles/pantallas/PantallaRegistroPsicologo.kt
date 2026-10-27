@@ -47,7 +47,7 @@ fun PantallaRegistroPsicologo(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Registro Profesional PIE",
+                text = "Registrate como Psicologo",
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.height(16.dp))

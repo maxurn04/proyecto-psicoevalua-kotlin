@@ -137,7 +137,7 @@ fun AppNavegacion(navController: NavHostController,
                                 respuestaDao.guardarRespuestas(respuestas)
                                 val finalizada = eval.copy(
                                     puntajeTotal = respuestas.sumOf { it.puntos },
-                                    estado = "Finalizada"
+                                    estado = "Por revisar"
                                 )
                                 evaluacionDao.actualizarEvaluacion(finalizada)
                                 evaluacionEstudiante = finalizada
@@ -196,7 +196,6 @@ fun AppNavegacion(navController: NavHostController,
                     preferencias.edit().putBoolean("mantener_sesion", false).apply()
                     navController.navigate("inicio")
                 }
-                //falta las categorias o mostrar todas las eval y revisar por detalle de una evaluacion,,,
             )
         }
         composable("nueva_evaluacion"){
@@ -222,6 +221,8 @@ fun AppNavegacion(navController: NavHostController,
             DetalleEvaluacion(
                 evaluacion = evaluacionSeleccionada,
                 evaluacionDao = evaluacionDao,
+                preguntaDao = preguntaDao,
+                respuestaDao = respuestaDao,
                 onGuardado = { navController.navigate("panel_ini_psicologo") },
                 onVolver = { navController.navigate("panel_ini_psicologo") }
             )

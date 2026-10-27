@@ -1,5 +1,6 @@
 package com.example.proyectoappsmoviles.pantallas
 
+import android.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -64,7 +65,7 @@ fun PanelPsicologo(
             Row(
                 modifier=Modifier
                     .fillMaxWidth()
-                    .padding(vertical=8.dp,horizontal=12.dp),
+                    .padding(vertical=20.dp,horizontal=10.dp),
                 horizontalArrangement=Arrangement.SpaceEvenly,
                 verticalAlignment=Alignment.CenterVertically
             ){
@@ -107,7 +108,7 @@ fun PanelPsicologo(
         Column(
             modifier=Modifier
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(20.dp)
                 .fillMaxSize(),
             verticalArrangement=Arrangement.Top,
             horizontalAlignment=Alignment.Start
@@ -118,16 +119,17 @@ fun PanelPsicologo(
                 verticalAlignment=Alignment.CenterVertically
             ){
                 Text(
-                    text="Buenos días, Psicólog@",
-                    style=MaterialTheme.typography.titleSmall
+                    text="Hola!, Psicólog@",
+                    style=MaterialTheme.typography.headlineSmall
                 )
                 Button(
                     onClick=onCerrarSesion,
                     colors=ButtonDefaults.buttonColors(containerColor=colorRojo)
                 ){
                     Text(
-                        text="Salir",
-                        color=Color.White
+                        text="Cerrar Sesion",
+                        color=Color.White,
+                        style=MaterialTheme.typography.labelSmall
                     )
                 }
             }
@@ -147,12 +149,13 @@ fun PanelPsicologo(
                         ){
                             Text(
                                 text="$activas",
-                                style=MaterialTheme.typography.headlineSmall,
+                                style=MaterialTheme.typography.headlineMedium,
                                 color=Color.White
                             )
                             Text(
                                 text="Activas",
-                                color=Color.White
+                                color=Color.White,
+                                style = MaterialTheme.typography.labelLarge
                             )
                         }
                     }
@@ -165,12 +168,14 @@ fun PanelPsicologo(
                         ){
                             Text(
                                 text="$completadas",
-                                style=MaterialTheme.typography.headlineSmall,
-                                color=Color.DarkGray
+                                style=MaterialTheme.typography.headlineMedium,
+                                color=Color.DarkGray,
+
                             )
                             Text(
                                 text="Completadas",
-                                color=Color.DarkGray
+                                color=Color.DarkGray,
+                                style = MaterialTheme.typography.labelLarge
                             )
                         }
                     }
@@ -183,28 +188,19 @@ fun PanelPsicologo(
                         ){
                             Text(
                                 text="$porRevisar",
-                                style=MaterialTheme.typography.headlineSmall,
+                                style=MaterialTheme.typography.headlineMedium,
                                 color=Color.DarkGray
                             )
                             Text(
                                 text="Por revisar",
-                                color=Color.DarkGray
+                                color=Color.DarkGray,
+                                style = MaterialTheme.typography.labelLarge
                             )
                         }
                     }
                 }
                 Spacer(modifier=Modifier.height(16.dp))
-                Button(
-                    onClick={onIrANuevaEvaluacion("Cuestionario de Adaptación Escolar")},
-                    modifier=Modifier.fillMaxWidth(),
-                    colors=ButtonDefaults.buttonColors(containerColor=colorRosa)
-                ){
-                    Text(
-                        text="+ Nueva aplicación / formulario",
-                        color=colorRojo
-                    )
-                }
-                Spacer(modifier=Modifier.height(8.dp))
+
                 Button(
                     onClick={
                         scope.launch(Dispatchers.IO){
@@ -213,7 +209,7 @@ fun PanelPsicologo(
                     },
                     modifier=Modifier.fillMaxWidth()
                 ){
-                    Text("Cargar / Actualizar Evaluaciones")
+                    Text("Actualizar Evaluaciones")
                 }
                 Spacer(modifier=Modifier.height(16.dp))
                 Text(
@@ -234,7 +230,7 @@ fun PanelPsicologo(
                                 modifier=Modifier.padding(16.dp)
                             ){
                                 Text(
-                                    text="${eval.idEstudianteFicticio} (ficticia)",
+                                    text="${eval.idEstudianteFicticio}",
                                     style=MaterialTheme.typography.titleMedium
                                 )
                                 Text(text=eval.nombreInstrumento)
@@ -252,108 +248,18 @@ fun PanelPsicologo(
                     }
                 }
             }else if(seccionActual=="instrumentos"){
-                Text(
-                    text="Catálogo de Instrumentos Predefinidos",
-                    style=MaterialTheme.typography.titleMedium
+                CatalogoInstrumentos(
+                    onSeleccionarInstrumento={instrumento->
+                        onIrANuevaEvaluacion(instrumento)
+                    }
                 )
-                Spacer(modifier=Modifier.height(12.dp))
-                Card(
-                    modifier=Modifier.fillMaxWidth()
-                ){
-                    Column(
-                        modifier=Modifier.padding(16.dp)
-                    ){
-                        Text(
-                            text="Cuestionario Socioemocional",
-                            style=MaterialTheme.typography.titleMedium
-                        )
-                        Text(text="Rango: 1° a 4° Básico - Tiempo: 15 min")
-                        Text(text="Estado: Disponible para aplicar")
-                        Spacer(modifier=Modifier.height(8.dp))
-                        Button(
-                            onClick={onIrANuevaEvaluacion("Cuestionario Socioemocional")},
-                            modifier=Modifier.fillMaxWidth(),
-                            colors=ButtonDefaults.buttonColors(containerColor=colorRojo)
-                        ){
-                            Text("Asignar este instrumento",color=Color.White)
-                        }
-                    }
-                }
-                Spacer(modifier=Modifier.height(12.dp))
-                Card(
-                    modifier=Modifier.fillMaxWidth()
-                ){
-                    Column(
-                        modifier=Modifier.padding(16.dp)
-                    ){
-                        Text(
-                            text="Escala de Hábitos de Estudio",
-                            style=MaterialTheme.typography.titleMedium
-                        )
-                        Text(text="Rango: 5° a 8° Básico - Tiempo: 20 min")
-                        Text(text="Estado: Disponible para aplicar")
-                        Spacer(modifier=Modifier.height(8.dp))
-                        Button(
-                            onClick={onIrANuevaEvaluacion("Escala de Hábitos de Estudio")},
-                            modifier=Modifier.fillMaxWidth(),
-                            colors=ButtonDefaults.buttonColors(containerColor=colorRojo)
-                        ){
-                            Text("Asignar este instrumento",color=Color.White)
-                        }
-                    }
-                }
             }else if(seccionActual=="historial"){
-                Text(
-                    text="Historial y Revisión de Estudiantes",
-                    style=MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier=Modifier.height(8.dp))
-                Button(
-                    onClick={
-                        scope.launch(Dispatchers.IO){
-                            listaEvaluaciones=evaluacionDao.obtenerEvaluaciones()
-                        }
-                    },
-                    modifier=Modifier.fillMaxWidth()
-                ){
-                    Text("Actualizar Historial")
-                }
-                Spacer(modifier=Modifier.height(8.dp))
-                LazyColumn(
-                    modifier=Modifier.weight(1f)
-                ){
-                    items(listaEvaluaciones){eval->
-                        Card(
-                            modifier=Modifier
-                                .fillMaxWidth()
-                                .padding(vertical=4.dp)
-                        ){
-                            Column(
-                                modifier=Modifier.padding(16.dp)
-                            ){
-                                Text(
-                                    text="Estudiante: ${eval.idEstudianteFicticio}",
-                                    style=MaterialTheme.typography.titleMedium
-                                )
-                                Text(text=eval.nombreInstrumento)
-                                Text(text="Curso: ${eval.cursoEstudiante} - PIN: ${eval.codigoPin}")
-                                Text(text="Estado: ${eval.estado} - Puntaje: ${eval.puntajeTotal}")
-                                if(eval.observacionPsicologo.isNotEmpty()){
-                                    Text(text="Observación: ${eval.observacionPsicologo}")
-                                }else{
-                                    Text(text="Observación: Pendiente de revisión")
-                                }
-                                Spacer(modifier=Modifier.height(8.dp))
-                                Button(
-                                    onClick={onRevisarEvaluacion(eval)},
-                                    colors=ButtonDefaults.buttonColors(containerColor=colorRojo)
-                                ){
-                                    Text("Revisar detalle",color=Color.White)
-                                }
-                            }
-                        }
+                PantallaHistorialPsicologo(
+                    evaluacionDao=evaluacionDao,
+                    onRevisarEvaluacion={eval->
+                        onRevisarEvaluacion(eval)
                     }
-                }
+                )
             }
         }
     }

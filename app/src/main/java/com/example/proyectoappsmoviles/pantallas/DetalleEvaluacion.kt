@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -18,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,19 +32,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.proyectoappsmoviles.datos.Evaluacion
 import com.example.proyectoappsmoviles.datos.EvaluacionDao
+import com.example.proyectoappsmoviles.datos.Pregunta
+import com.example.proyectoappsmoviles.datos.PreguntaDao
+import com.example.proyectoappsmoviles.datos.Respuesta
+import com.example.proyectoappsmoviles.datos.RespuestaDao
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 fun DetalleEvaluacion(
     evaluacion: Evaluacion,
     evaluacionDao: EvaluacionDao,
+    preguntaDao: PreguntaDao,
+    respuestaDao: RespuestaDao,
     onGuardado: () -> Unit,
     onVolver: () -> Unit
 ) {
-    var nuevaObservacion by remember { mutableStateOf(evaluacion.observacionPsicologo) }
+    var idEst by remember { mutableStateOf("MPZ-${evaluacion.id + 100}") }
     var estadoActual by remember { mutableStateOf(evaluacion.estado) }
     var mensaje by remember { mutableStateOf("") }
+    var mensObservacion by remember { mutableStateOf(evaluacion.observacionPsicologo) }
+    var listaRespuestas by remember { mutableStateOf(listOf<Respuesta>()) }
+    var listaPreguntas by remember { mutableStateOf(listOf<Pregunta>()) }
+    val opcionesTexto = listOf("Nunca", "A veces", "Casi siempre", "Siempre")
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(evaluacion.id) {
+        scope.launch(Dispatchers.IO) {
+            listaPreguntas = preguntaDao.obtenerPorInstrumento(evaluacion.nombreInstrumento)
+            listaRespuestas = respuestaDao.obtenerPorEvaluacion(evaluacion.id)
+        }
+    }
 
     val colorRojo = Color(0xFF832A2D)
     val colorRosa = Color(0xFFFBECEC)
@@ -64,13 +85,14 @@ fun DetalleEvaluacion(
                     onClick = onVolver,
                     colors = ButtonDefaults.buttonColors(containerColor = colorRojo)
                 ) {
-                    Text(" ← ", color = Color.White)
+                    Text("Volver", color = Color.White, style = MaterialTheme.typography.labelSmall)
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "Revisión profesional",
-                    style = MaterialTheme.typography.titleLarge
-                )
+                    text = "Detalle de Formulario",
+                    style = MaterialTheme.typography.titleLarge,
+
+                    )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -81,17 +103,18 @@ fun DetalleEvaluacion(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Estudiante: ${evaluacion.idEstudianteFicticio} (ficticio)",
+                        text = "Estudiante: ${evaluacion.idEstudianteFicticio}",
                         style = MaterialTheme.typography.titleMedium,
                         color = colorRojo
                     )
-                    Text(text = "Curso: ${evaluacion.cursoEstudiante}")
-                    Text(text = "Instrumento: ${evaluacion.nombreInstrumento}")
-                    Text(text = "Código PIN: ${evaluacion.codigoPin}")
-                    Text(text = "Estado actual: $estadoActual")
+                    Text(text = "ID Estudiante: $idEst")
+                    Text(text = "Curso: ${evaluacion.cursoEstudiante}", color = Color.DarkGray)
+                    Text(text = "Instrumento: ${evaluacion.nombreInstrumento}", color = Color.DarkGray)
+                    Text(text = "Codigo de Ingreso: ${evaluacion.codigoPin}", color = Color.DarkGray)
+                    Text(text = "Estado actual: $estadoActual", color = Color.DarkGray)
                     Text(
                         text = "Puntaje de prueba: ${evaluacion.puntajeTotal} pts",
-                        style = MaterialTheme.typography.titleSmall
+                        color = Color.DarkGray
                     )
                 }
             }
@@ -116,12 +139,51 @@ fun DetalleEvaluacion(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "Respuestas del estudiante:",
+                style = MaterialTheme.typography.titleSmall
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                if (listaRespuestas.isEmpty()) {
+                    item {
+                        Text(text = "Sin respuestas registradas aún.", color = Color.Gray)
+                    }
+                } else {
+                    items(listaRespuestas) { resp ->
+                        val preg = listaPreguntas.find { it.id == resp.idPregunta }
+                        val textoOpcion = opcionesTexto.getOrElse(resp.opcionElegida) { "" }
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(8.dp)) {
+                                Text(
+                                    text = preg?.texto ?: "Pregunta ${resp.idPregunta}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                                Text(
+                                    text = "Respuesta: $textoOpcion (${resp.puntos} pts)",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = colorRojo
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = nuevaObservacion,
-                onValueChange = { nuevaObservacion = it },
-                label = { Text("Observación profesional ficticia") },
+                value = mensObservacion,
+                onValueChange = { mensObservacion = it },
+                label = { Text("Observacion") },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -138,7 +200,7 @@ fun DetalleEvaluacion(
                         containerColor = if (estadoActual == "Por revisar") colorRojo else Color.LightGray
                     )
                 ) {
-                    Text("Por revisar", color = Color.White)
+                    Text("Por revisar", color = Color.DarkGray)
                 }
                 Button(
                     onClick = { estadoActual = "Completada" },
@@ -147,7 +209,7 @@ fun DetalleEvaluacion(
                         containerColor = if (estadoActual == "Completada") colorRojo else Color.LightGray
                     )
                 ) {
-                    Text("Completada", color = Color.White)
+                    Text("Completada", color = Color.DarkGray)
                 }
             }
 
@@ -155,7 +217,7 @@ fun DetalleEvaluacion(
 
             Button(
                 onClick = {
-                    if (nuevaObservacion.isNotBlank()) {
+                    if (mensObservacion.isNotBlank()) {
                         scope.launch {
                             evaluacionDao.actualizarEvaluacion(
                                 Evaluacion(
@@ -166,7 +228,7 @@ fun DetalleEvaluacion(
                                     nombreInstrumento = evaluacion.nombreInstrumento,
                                     estado = estadoActual,
                                     puntajeTotal = evaluacion.puntajeTotal,
-                                    observacionPsicologo = nuevaObservacion
+                                    observacionPsicologo = mensObservacion
                                 )
                             )
                             onGuardado()
@@ -179,6 +241,21 @@ fun DetalleEvaluacion(
                 colors = ButtonDefaults.buttonColors(containerColor = colorRojo)
             ) {
                 Text("Guardar observación y estado", color = Color.White)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = {
+                    scope.launch {
+                        evaluacionDao.eliminarEvaluacion(evaluacion)
+                        onVolver()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = colorRosa)
+            ) {
+                Text("Borrar evaluación", color = colorRojo)
             }
 
             if (mensaje.isNotBlank()) {
